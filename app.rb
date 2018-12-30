@@ -1,4 +1,5 @@
 require "sinatra"
+require "sinatra/activerecord"
 require "sinatra/reloader" if development?
 
 get '/' do
@@ -7,7 +8,7 @@ end
 
 get '/search' do
     query = URI.escape(params[:q])
-    
+
     redirect "/!/#{query}"
 end
 
