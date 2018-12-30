@@ -12,6 +12,11 @@ enable :sessions
 class MasschatUser < ActiveRecord::Base
     validates :username, uniqueness: true
     has_secure_password
+    has_many :posts
+end
+
+class Post < ActiveRecord::Base
+    has_one :masschat_user
 end
 
 # helpers
@@ -44,7 +49,28 @@ end
 get '/!/:query' do
     query = params[:query].strip
 
-    erb :query, :locals => {:query => query}
+    posts = Post.where(query: query)
+
+    erb :query, :locals => {:query => query.strip, :posts => posts}
+end
+
+get '/create' do
+    q = params[:q] || ""
+
+    erb :create_post, :locals => {:query => q.strip}
+end
+
+post '/create' do
+    query = params[:query].strip
+    url = params[:url]
+
+    post = Post.new
+    post.masschat_user_id = current_user.id
+    post.url = url
+    post.query = query
+    post.save
+
+    redirect "/!/#{query}"
 end
 
 get '/signup' do

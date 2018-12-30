@@ -19,5 +19,11 @@
         <input type="text" placeholder="Search" name="q" value="<%= query %>">  
         <input type="submit">
       </form>
+      <br>
+      <a href="/create?q=<%= query %>">Add post</a>
+      <br><br>
+    <% posts.each do |post| %>
+        <a href="<%= post.url %>"><%= post.url %></a><br>
+    <% end %>
 </body>
 </html>
