@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_30_210344) do
+ActiveRecord::Schema.define(version: 2018_12_30_213737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,16 @@ ActiveRecord::Schema.define(version: 2018_12_30_210344) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "masschat_user_id", null: false
+  end
+
+  create_table "votes", force: :cascade do |t|
+    t.bigint "masschat_user_id", null: false
+    t.boolean "up", null: false
+    t.bigint "post_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["masschat_user_id"], name: "index_votes_on_masschat_user_id"
+    t.index ["post_id"], name: "index_votes_on_post_id"
   end
 
 end

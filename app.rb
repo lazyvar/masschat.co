@@ -13,10 +13,21 @@ class MasschatUser < ActiveRecord::Base
     validates :username, uniqueness: true
     has_secure_password
     has_many :posts
+    has_many :votes
 end
 
 class Post < ActiveRecord::Base
-    has_one :masschat_user
+    belongs_to :masschat_user
+    has_many :votes
+
+    def score
+        votes.where(up: true).length - votes.where(up: false).length
+    end
+end
+
+class Vote < ActiveRecord::Base
+    belongs_to :masschat_user
+    belongs_to :post
 end
 
 # helpers
@@ -34,8 +45,6 @@ end
 # routes
 
 get '/' do
-    puts current_user
-    puts session[:current_user_id]
     erb :index
 end
 
@@ -50,8 +59,9 @@ get '/!/:query' do
     query = params[:query].strip
 
     posts = Post.where(query: query)
-
-    erb :query, :locals => {:query => query.strip, :posts => posts}
+    posts = posts.sort { |a,b| b.score <=> a.score }
+    
+    erb :query, :locals => {:query => query.strip, :posts => posts.first(20)}
 end
 
 get '/create' do
@@ -71,6 +81,21 @@ post '/create' do
     post.save
 
     redirect "/!/#{query}"
+end
+
+post '/vote' do   
+    post_id = params[:post_id].to_i
+    up = params[:up] == "true"
+
+    vote = Vote.find_by(post_id: post_id, masschat_user_id: current_user.id) || Vote.new
+    vote.up = up
+    vote.post_id = post_id
+    vote.masschat_user_id = current_user.id
+    vote.save!
+    
+    post = Post.find_by(id: post_id)
+
+    redirect "/!/#{post.query}"
 end
 
 get '/signup' do
