@@ -1,0 +1,17 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  database: masschatdb
+  pool: 5
+
+development:
+  <<: *default
+  host: localhost
+  username: masschat_developer
+  password: iDevelop
+
+production:
+  <<: *default
+  host: out-here-prod.cjukde9vfyvk.us-east-1.rds.amazonaws.com
+  username: 
+  password: 

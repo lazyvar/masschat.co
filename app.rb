@@ -2,6 +2,18 @@ require "sinatra"
 require "sinatra/activerecord"
 require "sinatra/reloader" if development?
 
+# configuration
+
+set :database_file, "config/database.yml"
+
+# models 
+
+class MasschatUser < ActiveRecord::Base
+    validates :username, uniqueness: true
+end
+
+# routes
+
 get '/' do
     send_file File.join(settings.public_folder, 'index.html')
 end
