@@ -14,10 +14,24 @@ class MasschatUser < ActiveRecord::Base
     has_secure_password
 end
 
+# helpers
+
+helpers do
+    def current_user
+      if session[:current_user_id]
+        MasschatUser.find(session[:current_user_id])
+      else
+        nil
+      end
+    end
+end
+
 # routes
 
 get '/' do
-    send_file File.join(settings.public_folder, 'index.html')
+    puts current_user
+    puts session[:current_user_id]
+    erb :index
 end
 
 get '/search' do
@@ -64,18 +78,36 @@ post '/signup' do
         status 400
         return erb :signup, :locals => {:error_message => exception.message}
     end
-    
+
+    session[:current_user_id] = user.id
+
     redirect '/'
 end
 
 get '/login' do
-
+    erb :login
 end
 
 post '/login' do
+    username = params[:username]
+    password = params[:password]
 
+    if username.empty? || password.empty?
+        # hiting the API not through the HTML form...
+        return erb :login
+    end
+
+    user = MasschatUser.find_by(username: username)
+
+    if user && user.authenticate(password)
+        session[:current_user_id] = user.id
+        redirect '/'
+    else
+        erb :login, :locals => {:error_message => "Nope"}
+    end
 end
 
-get 'logout' do
-
+get '/logout' do
+    session[:current_user_id] = nil
+    redirect '/'
 end

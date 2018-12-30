@@ -3,21 +3,23 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>masschat | sign up</title>
+    <title>masschat | log in</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <form action="/signup">
-          <h2>Sign Up</h2>
+    <form action="/login" method="POST">
+          <h2>Log In</h2>
           <hr>
           <input type="text" placeholder="Username" name="username" required>
           <br><br>
           <input type="password" placeholder="Password" name="password" required>
-          <br><br>
-          <input type="password" placeholder="Confirm Password" name="confirm_password" required>
           <br>
-          <p style="color: firebrick">Error</p>
-        <button type="submit" class="signupbtn">Sign Up</button>
+          <% if defined? error_message %>
+          <p style="color: firebrick"> <%= error_message %> </p>
+          <% else %>
+          <br>
+          <% end %>
+        <button type="submit" >Log in</button>
       </form>
 </body>
 </html>

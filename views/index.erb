@@ -3,14 +3,21 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>masschat</title>
+    <title>masschat | home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+    <% if current_user.nil?  %>
+        <a href="/login">Log in<a>
+        <a href="/signup">Sign up</a>
+    <% else %>
+        <p>Logged in as <%= current_user.username %> </p>
+        <a href="/logout">Log out</a>
+    <% end %>
     <form action="/search">
         <br>
         <input type="text" placeholder="Search" name="q">  
         <input type="submit">
-      </form>
+    </form>
 </body>
 </html>
