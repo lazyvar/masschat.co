@@ -35,13 +35,14 @@ get '/' do
 end
 
 get '/search' do
-    query = URI.escape(params[:q])
+    q = params[:q].strip
+    query = URI.escape(q)
 
     redirect "/!/#{query}"
 end
 
 get '/!/:query' do
-    query = params[:query]
+    query = params[:query].strip
 
     erb :query, :locals => {:query => query}
 end
