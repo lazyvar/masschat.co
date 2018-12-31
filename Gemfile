@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'rack-ssl'
 gem 'twilio-ruby'
 gem 'bcrypt'
 gem 'rake'

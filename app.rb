@@ -2,6 +2,7 @@ require "sinatra"
 require "sinatra/activerecord"
 require "sinatra/reloader" if development?
 require 'twilio-ruby'
+require 'rack/ssl'
 
 twilio_sid = ENV['masschat_twilio_sid']
 twilio_auth_token = ENV['masschat_twilio_auth_token']
@@ -27,6 +28,14 @@ db_settings = {
 
 set :database, db_settings
 enable :sessions
+configure :development, :test do
+    set :host, 'localhost:4567'
+end
+
+configure :production do
+  set :host, 'www.masschat.co'
+  use Rack::SSL
+end
 
 # models 
 
