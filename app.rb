@@ -10,7 +10,22 @@ twilio_client = Twilio::REST::Client.new twilio_sid, twilio_auth_token
 
 # configuration
 
-set :database_file, "config/database.yml"
+db_name = ENV['masschat_db_name']
+db_host = ENV['masschat_db_host']
+db_username = ENV['masschat_db_username']
+db_password = ENV['masschat_db_password']
+
+db_settings = { 
+    adapter: 'postgresql',
+    encoding: 'unicode',
+    database: db_name,
+    pool: 5,
+    username: db_username,
+    password: db_password,
+    host: db_host
+}
+
+set :database, db_settings
 enable :sessions
 
 # models 
