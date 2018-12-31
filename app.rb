@@ -83,6 +83,10 @@ get '/search' do
     redirect "/!/#{query}"
 end
 
+get '/!/' do
+    redirect "/"
+end
+
 get '/!/:query' do
     query = params[:query].strip
 
