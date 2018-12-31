@@ -14,6 +14,10 @@ class MasschatUser < ActiveRecord::Base
     has_secure_password
     has_many :posts
     has_many :votes
+
+    def display_name
+        "@#{username}"
+    end
 end
 
 class Post < ActiveRecord::Base
@@ -23,6 +27,7 @@ class Post < ActiveRecord::Base
     def score
         votes.where(up: true).length - votes.where(up: false).length
     end
+
 end
 
 class Vote < ActiveRecord::Base
@@ -40,6 +45,29 @@ helpers do
         nil
       end
     end
+
+    def post_selected_classname(post, up)
+        voted_up = current_user_voted_up(post)
+        unless voted_up.nil?
+            voted_up == up ? "selected" : ""
+        else 
+            ""
+        end
+    end
+
+    def current_user_voted_up(post)
+        if current_user
+            vote = post.votes.find_by(masschat_user_id: current_user.id)
+            if vote
+                vote.up
+            else
+                nil
+            end
+        else
+            nil
+        end
+    end
+
 end
 
 # routes
@@ -83,9 +111,11 @@ post '/create' do
     redirect "/!/#{query}"
 end
 
-post '/vote' do   
-    post_id = params[:post_id].to_i
-    up = params[:up] == "true"
+post '/vote' do  
+    payload = JSON.parse request.body.read
+
+    post_id = payload['post_id'].to_i
+    up = payload['up']
 
     vote = Vote.find_by(post_id: post_id, masschat_user_id: current_user.id) || Vote.new
     vote.up = up
@@ -93,9 +123,7 @@ post '/vote' do
     vote.masschat_user_id = current_user.id
     vote.save!
     
-    post = Post.find_by(id: post_id)
-
-    redirect "/!/#{post.query}"
+    "success"
 end
 
 get '/signup' do

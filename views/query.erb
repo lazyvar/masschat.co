@@ -3,41 +3,112 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>masschat | <%= query %></title>
+    <title>masschat | home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <style>
+        body {
+            font-family: 'Courier new';
+        }
+        .top-border {
+            background: #003366;
+            height: 3px;
+        }
+        .main {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        a:link, a:visited {
+            color: #003366;
+        }
+        a.upvote:link, a.upvote:visited {
+            text-decoration: none;
+            color: green;
+        }
+        a.downvote:link, a.downvote:visited {
+            text-decoration: none;
+            color: firebrick;
+        }
+        .vote {
+            padding-top: 1px;
+            padding-bottom: 1px;
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+        .selected {
+            background: whitesmoke;
+        }
+    </style>
+    <script>
+        function vote(post_id, up) {
+            tag = up ? "up" : "down"
+            upvote_button = document.getElementById("up_" + post_id);
+            downvote_button = document.getElementById("down_" + post_id);
+            score = document.getElementById("score_" + post_id);
+            previousScore = parseInt(score.innerHTML)
+            scoreChange = 1
+            upvoteSelected = upvote_button.classList.contains("selected")
+            downvoteSelected = downvote_button.classList.contains("selected")
+
+            if ((upvoteSelected && up) || (downvoteSelected && !up)) {
+                return false
+            }
+
+            if (upvoteSelected || downvoteSelected) {
+                scoreChange = 2
+            }
+            
+            if (up) {
+                upvote_button.classList.add("selected");
+                downvote_button.classList.remove("selected");
+                score.innerHTML = previousScore + scoreChange
+            } else {
+                upvote_button.classList.remove("selected");
+                downvote_button.classList.add("selected");
+                score.innerHTML = previousScore - scoreChange
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/vote', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                post_id: post_id,
+                up: up
+            }));
+
+            return false
+        }
+    </script>
 </head>
 <body>
-    <% if current_user.nil?  %>
-        <a href="/login">Log in<a>
-        <a href="/signup">Sign up</a>
-    <% else %>
-        <p>Logged in as <%= current_user.username %> </p>
-        <a href="/logout">Log out</a>
-    <% end %>
-    <form action="/search">
-        <br>
-        <input type="text" placeholder="Search" name="q" value="<%= query %>">  
-        <input type="submit">
-      </form>
-      <br>
-      <a href="/create?q=<%= query %>">Add post</a>
-      <br><br>
-    <% posts.each do |post| %>
-        <br>
-        <a href="<%= post.url %>"><%= post.url %></a>
-        <p>Score: <%= post.score %> </p>
-        <% unless current_user.nil? %>
-        <form action="/vote" method="POST">
-            <input type="hidden" name="up" value="true">
-            <input type="hidden" name="post_id" value="<%= post.id %>">
-            <button type="submit" >Upvote</button>
-        </form>
-        <form action="/vote" method="POST">
-            <input type="hidden" name="up" value="false">
-            <input type="hidden" name="post_id" value="<%= post.id %>">
-            <button type="submit" >Downvote</button>
-        </form>
+<div class="top-border"></div>
+<div class="main">
+    <form action="/search"> 
+    <p>
+        masschat.co:
+        <input type="search" style="display: inline" placeholder="Search..." name="q">
+        <button type="submit">Go</button>
+    <span style="float: right;"> 
+        <% if current_user.nil?  %>
+            <a href="/login">Log in<a>
+            <a href="/signup">Sign up</a>
+        <% else %>
+            <%= current_user.display_name %>
+            <a href="/logout">Log out</a>
         <% end %>
+    </p>
+    </form>
+    <a href="/create?q=<%= query %>">Add link</a>
+    <% posts.each_with_index do |post, index| %>
+        <p>
+            <%= index+1 %>. (<span id="score_<%= post.id %>"><%= post.score %></span>)
+            <% unless current_user.nil? %>
+                <a class="vote upvote <%= post_selected_classname(post, true) %>" href="#" onclick="return vote(<%= post.id %>, true)" id="up_<%= post.id %>">+</a>
+                <a class="vote downvote <%= post_selected_classname(post, false) %>" href="#" onclick="return vote(<%= post.id %>, false)" id="down_<%= post.id %>">-</a>
+            <% end %>
+            <a href="<%= post.url %>"><%= post.url %></a>
+        </p>
     <% end %>
+</div> 
 </body>
 </html>
