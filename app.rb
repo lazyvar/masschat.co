@@ -117,7 +117,9 @@ post '/add' do
     query = params[:query].strip
     url = params[:url]
 
-    
+    unless url.start_with?("http://") || url.start_with?("https://")
+        url = "http://#{url}"
+    end
     
     existing_post = Post.find_by(query: query, url: url)
 
