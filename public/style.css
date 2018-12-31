@@ -17,3 +17,20 @@ a:link, a:visited {
 a:hover {
     text-decoration: underline;
 }
+a.upvote:link, a.upvote:visited {
+    text-decoration: none;
+    color: green;
+}
+a.downvote:link, a.downvote:visited {
+    text-decoration: none;
+    color: firebrick;
+}
+.vote {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.selected {
+    background: whitesmoke;
+}

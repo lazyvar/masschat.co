@@ -8,66 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-
-    <style>
-        a.upvote:link, a.upvote:visited {
-            text-decoration: none;
-            color: green;
-        }
-        a.downvote:link, a.downvote:visited {
-            text-decoration: none;
-            color: firebrick;
-        }
-        .vote {
-            padding-top: 1px;
-            padding-bottom: 1px;
-            padding-left: 4px;
-            padding-right: 4px;
-        }
-        .selected {
-            background: whitesmoke;
-        }
-    </style>
-    <script>
-        function vote(post_id, up) {
-            tag = up ? "up" : "down"
-            upvote_button = document.getElementById("up_" + post_id);
-            downvote_button = document.getElementById("down_" + post_id);
-            score = document.getElementById("score_" + post_id);
-            previousScore = parseInt(score.innerHTML)
-            scoreChange = 1
-            upvoteSelected = upvote_button.classList.contains("selected")
-            downvoteSelected = downvote_button.classList.contains("selected")
-
-            if ((upvoteSelected && up) || (downvoteSelected && !up)) {
-                return false
-            }
-
-            if (upvoteSelected || downvoteSelected) {
-                scoreChange = 2
-            }
-            
-            if (up) {
-                upvote_button.classList.add("selected");
-                downvote_button.classList.remove("selected");
-                score.innerHTML = previousScore + scoreChange
-            } else {
-                upvote_button.classList.remove("selected");
-                downvote_button.classList.add("selected");
-                score.innerHTML = previousScore - scoreChange
-            }
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", '/vote', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({
-                post_id: post_id,
-                up: up
-            }));
-
-            return false
-        }
-    </script>
+    <script src="/app.js"></script>
 </head>
 <body>
 <div class="top-border"></div>
@@ -82,8 +23,7 @@
             <a href="/login">Log in<a>
             <a href="/signup">Sign up</a>
         <% else %>
-            <%= current_user.display_name %>
-            <a href="/logout">Log out</a>
+            <a href="/@/<%= current_user.username %>"><%= current_user.display_name %></a>
         <% end %>
     </p>
     </form>

@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>masschat | sign up confirmation</title>
+    <title>masschat | <%= user.display_name %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/app.js"></script>
 </head>
 <body>
 <div class="top-border"></div>
@@ -24,19 +25,20 @@
         <% else %>
             <a href="/@/<%= current_user.username %>"><%= current_user.display_name %></a>
         <% end %>
+    </span>
     </p>
     </form>
-    <form action="/signup-confirm-phone" method="POST">
-        <h3>Confirm phone number</h3>
-        <input type="text" placeholder="Code" name="code" required>
-        <br>
-        <% if defined? error_message %>
-        <p style="color: firebrick"> <%= error_message %> </p>
-        <% else %>
-        <br>
-        <% end %>
-        <button type="submit">Confirm</button>
-    </form>
+    <h3 style="display: inline;"><%= user.display_name %> (<%= karma %>)</h3>
+    <a href="/logout">Log out</a>
+    <% posts.each_with_index do |post, index| %>
+        <p>
+            <%= index+1 %>. (<span id="score_<%= post.id %>"><%= post.score %></span>)
+            <% unless current_user.nil? %>
+            <% end %>
+            <a href="<%= post.url %>"><%= post.display %></a>
+            | <a href="/!/<%= post.query %>"><%= post.query %></a>
+        </p>
+    <% end %>
 </div> 
 </body>
 </html>

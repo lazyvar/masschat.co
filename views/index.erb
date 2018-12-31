@@ -22,8 +22,7 @@
             <a href="/login">Log in<a>
             <a href="/signup">Sign up</a>
         <% else %>
-            <%= current_user.display_name %>
-            <a href="/logout">Log out</a>
+            <a href="/@/<%= current_user.username %>"><%= current_user.display_name %></a>
         <% end %>
     </span>
     </p>

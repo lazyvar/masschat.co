@@ -110,6 +110,30 @@ get '/!/:query' do
     erb :query, :locals => {:query => query.strip, :posts => posts.first(20)}
 end
 
+get '/@/' do
+    if current_user
+        return redirect "/@/#{current_user.username}"
+    end
+
+    redirect '/'
+end
+
+get '/@/:username' do
+    username = params[:username]
+
+    user = MasschatUser.find_by(username: username)
+
+    if user.nil?
+        return redirect '/'
+    end
+
+    posts = user.posts
+    posts = posts.sort { |a,b| b.score <=> a.score }
+    karma = posts.reduce(0) { |sum, post| sum + post.score }
+
+    erb :user_profile, :locals => {:user => user, posts: posts, karma: karma}
+end
+
 get '/add' do
     unless current_user
         return redirect '/'
