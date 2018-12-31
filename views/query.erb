@@ -86,7 +86,9 @@
         <% end %>
     </p>
     </form>
-    <a href="/add?q=<%= query %>">Add link</a>
+    <% unless current_user.nil? %>
+        <a href="/add?q=<%= query %>">Add link</a>
+    <% end %>
     <% posts.each_with_index do |post, index| %>
         <p>
             <%= index+1 %>. (<span id="score_<%= post.id %>"><%= post.score %></span>)

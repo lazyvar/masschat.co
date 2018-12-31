@@ -93,6 +93,10 @@ get '/!/:query' do
 end
 
 get '/add' do
+    unless current_user
+        return redirect '/'
+    end
+    
     q = params[:q] || ""
 
     erb :add_link, :locals => {:query => q.strip}
