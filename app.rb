@@ -127,6 +127,10 @@ post '/vote' do
 end
 
 get '/signup' do
+    if current_user
+        return redirect '/'
+    end
+
     erb :signup
 end
 
@@ -165,6 +169,10 @@ post '/signup' do
 end
 
 get '/login' do
+    if current_user
+        return redirect '/'
+    end
+
     erb :login
 end
 

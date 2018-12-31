@@ -3,23 +3,41 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>masschat | add post </title>
+    <title>masschat | add</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <form action="/create" method="POST">
-          <h2>Add post</h2>
-          <hr>
-          <input type="text" placeholder="Query" name="query" value="<%= query %>" required>
-          <br><br>
-          <input type="text" placeholder="URL" name="url" required>
-          <br>
-          <% if defined? error_message %>
-          <p style="color: firebrick"> <%= error_message %> </p>
-          <% else %>
-          <br>
-          <% end %>
-        <button type="submit" >Create</button>
-      </form>
+<div class="top-border"></div>
+<div class="main">
+    <form action="/search"> 
+    <p>
+        <a href="/">masschat.co:</a>
+        <input type="search" style="display: inline" placeholder="Search..." name="q">
+        <button type="submit">Go</button>
+    <span style="float: right;"> 
+        <% if current_user.nil?  %>
+            <a href="/login">Log in<a>
+            <a href="/signup">Sign up</a>
+        <% else %>
+            <%= current_user.display_name %>
+            <a href="/logout">Log out</a>
+        <% end %>
+    </p>
+    </form>
+    <form action="/add" method="POST">
+        <h3>Add link</h3>
+        <input type="text" placeholder="Query" name="query" value="<%= query %>" required>
+        <br><br>
+        <input type="text" placeholder="URL" name="url" required>
+        <br>
+        <% if defined? error_message %>
+        <p style="color: firebrick"> <%= error_message %> </p>
+        <% else %>
+        <br>
+        <% end %>
+    <button type="submit" >Add</button>
+    </form>
+</div> 
 </body>
-</html>

@@ -3,24 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>masschat | home</title>
+    <title>masschat | <%= query %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="/style.css">
+
     <style>
-        body {
-            font-family: 'Courier new';
-        }
-        .top-border {
-            background: #003366;
-            height: 3px;
-        }
-        .main {
-            padding-left: 15px;
-            padding-right: 15px;
-        }
-        a:link, a:visited {
-            color: #003366;
-        }
         a.upvote:link, a.upvote:visited {
             text-decoration: none;
             color: green;
@@ -85,8 +73,8 @@
 <div class="main">
     <form action="/search"> 
     <p>
-        masschat.co:
-        <input type="search" style="display: inline" placeholder="Search..." name="q">
+        <a href="/">masschat.co:</a>
+        <input type="search" style="display: inline" placeholder="Search..." name="q" value="<%= query %>">
         <button type="submit">Go</button>
     <span style="float: right;"> 
         <% if current_user.nil?  %>

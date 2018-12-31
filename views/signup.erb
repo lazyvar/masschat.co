@@ -5,23 +5,42 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>masschat | sign up</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+<div class="top-border"></div>
+<div class="main">
+    <form action="/search"> 
+    <p>
+        <a href="/">masschat.co:</a>
+        <input type="search" style="display: inline" placeholder="Search..." name="q">
+        <button type="submit">Go</button>
+    <span style="float: right;"> 
+        <% if current_user.nil?  %>
+            <a href="/login">Log in<a>
+            <a href="/signup">Sign up</a>
+        <% else %>
+            <%= current_user.display_name %>
+            <a href="/logout">Log out</a>
+        <% end %>
+    </p>
+    </form>
     <form action="/signup" method="POST">
-          <h2>Sign Up</h2>
-          <hr>
-          <input type="text" placeholder="Username" name="username" required>
-          <br><br>
-          <input type="password" placeholder="Password" name="password" required>
-          <br><br>
-          <input type="password" placeholder="Confirm Password" name="confirm_password" required>
-          <br>
-          <% if defined? error_message %>
-          <p style="color: firebrick"> <%= error_message %> </p>
-          <% else %>
-          <br>
-          <% end %>
-        <button type="submit">Sign Up</button>
-      </form>
+        <h3>Sign Up</h3>
+        <input type="text" placeholder="Username" name="username" required>
+        <br><br>
+        <input type="password" placeholder="Password" name="password" required>
+        <br><br>
+        <input type="password" placeholder="Confirm Password" name="confirm_password" required>
+        <br>
+        <% if defined? error_message %>
+        <p style="color: firebrick"> <%= error_message %> </p>
+        <% else %>
+        <br>
+        <% end %>
+    <button type="submit">Sign Up</button>
+    </form>
+</div> 
 </body>
 </html>
