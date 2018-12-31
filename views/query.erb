@@ -98,7 +98,7 @@
         <% end %>
     </p>
     </form>
-    <a href="/create?q=<%= query %>">Add link</a>
+    <a href="/add?q=<%= query %>">Add link</a>
     <% posts.each_with_index do |post, index| %>
         <p>
             <%= index+1 %>. (<span id="score_<%= post.id %>"><%= post.score %></span>)

@@ -92,13 +92,13 @@ get '/!/:query' do
     erb :query, :locals => {:query => query.strip, :posts => posts.first(20)}
 end
 
-get '/create' do
+get '/add' do
     q = params[:q] || ""
 
-    erb :create_post, :locals => {:query => q.strip}
+    erb :add_link, :locals => {:query => q.strip}
 end
 
-post '/create' do
+post '/add' do
     query = params[:query].strip
     url = params[:url]
 
