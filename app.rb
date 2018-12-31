@@ -117,6 +117,14 @@ post '/add' do
     query = params[:query].strip
     url = params[:url]
 
+    
+    
+    existing_post = Post.find_by(query: query, url: url)
+
+    if existing_post
+        return erb :add_link, :locals => {:query => query, :error_message => "The link '#{url}' has already been added for '#{query}'"}
+    end
+
     post = Post.new
     post.masschat_user_id = current_user.id
     post.url = url
