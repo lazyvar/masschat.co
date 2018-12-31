@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>masschat | sign up</title>
+    <title>masschat | log in confirmation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="/style.css">
@@ -27,18 +27,16 @@
         <% end %>
     </p>
     </form>
-    <form action="/signup" method="POST">
-        <h3>Sign Up</h3>
-        <input type="text" placeholder="Username" name="username" required>
-        <br><br>
-        <input type="text" placeholder="Phone number" name="phonenumber" required>
+    <form action="/login-confirm-phone" method="POST">
+        <h3>Confirm phone number</h3>
+        <input type="text" placeholder="Code" name="code" required>
         <br>
         <% if defined? error_message %>
         <p style="color: firebrick"> <%= error_message %> </p>
         <% else %>
         <br>
         <% end %>
-    <button type="submit">Sign Up</button>
+        <button type="submit">Confirm</button>
     </form>
 </div> 
 </body>

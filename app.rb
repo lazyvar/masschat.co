@@ -1,6 +1,12 @@
 require "sinatra"
 require "sinatra/activerecord"
 require "sinatra/reloader" if development?
+require 'twilio-ruby'
+
+twilio_sid = ENV['masschat_twilio_sid']
+twilio_auth_token = ENV['masschat_twilio_auth_token']
+
+twilio_client = Twilio::REST::Client.new twilio_sid, twilio_auth_token
 
 # configuration
 
@@ -11,7 +17,8 @@ enable :sessions
 
 class MasschatUser < ActiveRecord::Base
     validates :username, uniqueness: true
-    has_secure_password
+    validates :phonenumber, uniqueness: true
+
     has_many :posts
     has_many :votes
 
@@ -146,32 +153,65 @@ end
 
 post '/signup' do
     username = params[:username]
-    password = params[:password]
-    confirm_password = params[:confirm_password]
+    phonenumber = params[:phonenumber]
 
-    if username.empty? || password.empty? || confirm_password.empty?
+    if username.empty? || phonenumber.empty?
         # hiting the API not through the HTML form...
         return erb :signup
     end
 
-    if password != confirm_password
-        status 400
-        return erb :signup, :locals => {:error_message => 'Passwords do not match'}
+    begin
+        number = twilio_client.lookups.phone_numbers(phonenumber).fetch.phone_number
+    rescue => exception
+        return erb :signup, :locals => {:error_message => 'Invalid phone number'}         
     end
 
-    if password.length < 6
-        status 400
-        return erb :signup, :locals => {:error_message => 'Password must be at least 6 characters'}
+    if MasschatUser.find_by(username: username) || MasschatUser.find_by(phonenumber: number)
+        return erb :signup, :locals => {:error_message => 'User with that info already exists'}
     end
 
-    user = MasschatUser.new(username: username, password: password)
+    code = rand(1000..9999)
 
     begin
-        user.save!
+        twilio_client.api.account.messages.create(
+            from: '+14848813811',
+            to: number,
+            body: "Your login code for Masschat is #{code}"
+        )
     rescue => exception
-        status 400
-        return erb :signup, :locals => {:error_message => exception.message}
+        return erb :signup, :locals => {:error_message => 'Error sending message, please try again'}         
     end
+
+    session[:signup_code] = code
+    session[:signup_username] = username
+    session[:signup_phonenumber] = number
+
+    redirect '/signup-confirm-phone'
+end
+
+get '/signup-confirm-phone' do
+    if current_user
+        return redirect '/'
+    end
+
+    erb :signup_confirm_phone
+end
+
+post '/signup-confirm-phone' do
+    code_confirmation = params[:code]
+    code = session[:signup_code].to_s
+    username = session[:signup_username]
+    phonenumber = session[:signup_phonenumber]
+
+    if code != code_confirmation
+        return erb :signup_confirm_phone, :locals => {error_message: "That code does not match"}
+    end
+
+    user = MasschatUser.create(username: username, phonenumber: phonenumber)
+
+    session[:signup_code] = nil
+    session[:signup_username] = nil
+    session[:signup_phonenumber] = nil
 
     session[:current_user_id] = user.id
 
@@ -187,22 +227,66 @@ get '/login' do
 end
 
 post '/login' do
-    username = params[:username]
-    password = params[:password]
+    phonenumber = params[:phonenumber]
 
-    if username.empty? || password.empty?
+    if phonenumber.empty?
         # hiting the API not through the HTML form...
         return erb :login
     end
 
-    user = MasschatUser.find_by(username: username)
-
-    if user && user.authenticate(password)
-        session[:current_user_id] = user.id
-        redirect '/'
-    else
-        erb :login, :locals => {:error_message => "Nope"}
+    begin
+        number = twilio_client.lookups.phone_numbers(phonenumber).fetch.phone_number
+    rescue => exception
+        return erb :login, :locals => {:error_message => 'Invalid phone number'}         
     end
+
+    user = MasschatUser.find_by(phonenumber: number)
+
+    if user.nil?
+        return erb :login, :locals => {:error_message => 'Invalid phone number'}
+    end
+        
+    code = rand(1000..9999)
+
+    begin
+        twilio_client.api.account.messages.create(
+            from: '+14848813811',
+            to: number,
+            body: "Your login code for Masschat is #{code}"
+        )
+    rescue => exception
+        return erb :login, :locals => {:error_message => 'Error sending message, please try again'}         
+    end
+
+    session[:login_code] = code
+    session[:login_user_id] = user.id
+
+    redirect '/login-confirm-phone'
+end
+
+get '/login-confirm-phone' do
+    if current_user
+        return redirect '/'
+    end
+
+    erb :login_confirm_phone
+end
+
+post '/login-confirm-phone' do
+    code_confirmation = params[:code]
+    code = session[:login_code].to_s
+    login_user_id = session[:login_user_id]
+
+    if code != code_confirmation
+        return erb :login_confirm_phone, :locals => {error_message: "That code does not match"}
+    end
+
+    session[:login_code] = nil
+    session[:login_user_id] = nil
+
+    session[:current_user_id] = login_user_id
+
+    redirect '/'
 end
 
 get '/logout' do

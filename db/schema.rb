@@ -10,19 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_30_213737) do
+ActiveRecord::Schema.define(version: 2018_12_31_152038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "masschat_users", force: :cascade do |t|
     t.string "username", null: false
-    t.string "password_digest", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.bigint "{:index=>true}_id"
+    t.string "phonenumber", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phonenumber"], name: "index_masschat_users_on_phonenumber", unique: true
     t.index ["username"], name: "index_masschat_users_on_username", unique: true
-    t.index ["{:index=>true}_id"], name: "index_masschat_users_on_{:index=>true}_id"
   end
 
   create_table "posts", force: :cascade do |t|
