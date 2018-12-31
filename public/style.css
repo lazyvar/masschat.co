@@ -1,5 +1,6 @@
 body {
-    font-family: 'Courier new';
+    font-family: 'Source Code Pro', monospace;
+    font-size: smaller;
 }
 .top-border {
     background: #003366;
