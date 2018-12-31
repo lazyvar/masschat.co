@@ -35,6 +35,13 @@ class Post < ActiveRecord::Base
         votes.where(up: true).length - votes.where(up: false).length
     end
 
+    def display
+        unless title.nil? || title.empty?
+            title
+        else
+            url
+        end
+    end
 end
 
 class Vote < ActiveRecord::Base
@@ -116,6 +123,7 @@ end
 post '/add' do
     query = params[:query].strip
     url = params[:url]
+    title = params[:title]
 
     unless url.start_with?("http://") || url.start_with?("https://")
         url = "http://#{url}"
@@ -131,6 +139,7 @@ post '/add' do
     post.masschat_user_id = current_user.id
     post.url = url
     post.query = query
+    post.title = title
     post.save
 
     query = URI.escape(query)

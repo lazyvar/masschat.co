@@ -97,7 +97,7 @@
                 <a class="vote upvote <%= post_selected_classname(post, true) %>" href="#" onclick="return vote(<%= post.id %>, true)" id="up_<%= post.id %>">+</a>
                 <a class="vote downvote <%= post_selected_classname(post, false) %>" href="#" onclick="return vote(<%= post.id %>, false)" id="down_<%= post.id %>">-</a>
             <% end %>
-            <a href="<%= post.url %>"><%= post.url %></a>
+            <a href="<%= post.url %>"><%= post.display %></a>
         </p>
     <% end %>
 </div> 
