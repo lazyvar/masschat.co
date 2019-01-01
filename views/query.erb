@@ -28,7 +28,7 @@
     </p>
     </form>
     <% unless current_user.nil? %>
-        <a href="/add?q=<%= query %>">Add link</a>
+        <a href="/add?q=<%= query %>">Add</a>
     <% end %>
     <% posts.each_with_index do |post, index| %>
         <p>
@@ -37,7 +37,11 @@
                 <a class="vote upvote <%= post_selected_classname(post, true) %>" href="#" onclick="return vote(<%= post.id %>, true)" id="up_<%= post.id %>">+</a>
                 <a class="vote downvote <%= post_selected_classname(post, false) %>" href="#" onclick="return vote(<%= post.id %>, false)" id="down_<%= post.id %>">-</a>
             <% end %>
+            <% unless post.url.empty? %>
             <a href="<%= post.url %>"><%= post.display %></a>
+            <% else %>
+            <%= post.display %>
+            <% end %>
             - <a href="/@/<%= post.masschat_user.username  %>"><%= post.masschat_user.display_name %></a>
         </p>
     <% end %>

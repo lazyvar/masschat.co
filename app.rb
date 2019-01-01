@@ -3,6 +3,7 @@ require "sinatra/activerecord"
 require "sinatra/reloader" if development?
 require 'twilio-ruby'
 require 'rack/ssl'
+require 'uri'
 
 twilio_sid = ENV['masschat_twilio_sid']
 twilio_auth_token = ENV['masschat_twilio_auth_token']
@@ -173,14 +174,16 @@ post '/add' do
     url = params[:url]
     title = params[:title]
 
-    unless url.start_with?("http://") || url.start_with?("https://")
+    if url.empty? && title.empty?
+        return erb :add_link, :locals => {:query => query, :error_message => "Either a URL or some text is required"}
+    end
+
+    unless url.empty? || url.start_with?("http://") || url.start_with?("https://")
         url = "http://#{url}"
     end
     
-    existing_post = Post.find_by(query: query, url: url)
-
-    if existing_post
-        return erb :add_link, :locals => {:query => query, :error_message => "The link '#{url}' has already been added for '#{query}'"}
+    unless url.empty? || url =~ URI::regexp
+        return erb :add_link, :locals => {:query => query, :error_message => "URL is in incorrect format"}
     end
 
     post = Post.new

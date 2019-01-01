@@ -35,7 +35,11 @@
             <%= index+1 %>. (<span id="score_<%= post.id %>"><%= post.score %></span>)
             <% unless current_user.nil? %>
             <% end %>
+            <% unless post.url.empty? %>
             <a href="<%= post.url %>"><%= post.display %></a>
+            <% else %>
+            <%= post.display %>
+            <% end %>
             | <a href="/!/<%= post.query %>"><%= post.query %></a>
         </p>
     <% end %>

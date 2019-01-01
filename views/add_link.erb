@@ -27,12 +27,12 @@
     </p>
     </form>
     <form action="/add" method="POST">
-        <h3>Add link</h3>
+        <h3>Add</h3>
         <input type="text" placeholder="Context" name="query" value="<%= query %>" required>
         <br><br>
-        <input type="text" placeholder="URL" name="url" required>
+        <input type="text" placeholder="URL" name="url">
         <br><br>
-        <input type="text" placeholder="Title" name="title">
+        <input type="text" placeholder="Text" name="title">
         <br>
         <% if defined? error_message %>
         <p style="color: firebrick"> <%= error_message %> </p>
